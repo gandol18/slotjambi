@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Slot Gratis Jambi</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a, #1c1c1c);
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .cover {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #222, #000);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+    .cover h1 {
+      font-size: 2rem;
+      color: gold;
+      text-shadow: 0 0 15px rgba(255,215,0,0.8);
+    }
+    .loading-dots::after {
+      content: "...";
+      animation: dots 1s steps(3, end) infinite;
+    }
+    @keyframes dots {
+      0% { content: ""; }
+      33% { content: "."; }
+      66% { content: ".."; }
+      100% { content: "..."; }
+    }
+    .enter-btn {
+      margin-top: 20px;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      color: #000;
+      background: gold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255,215,0,0.6);
+      transition: transform 0.2s;
+    }
+    .enter-btn:hover {
+      transform: scale(1.1);
+    }
+    .stage { display: none; flex-direction: column; align-items: center; }
+    .spinner {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, gold, orange);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #111;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(255,215,0,0.8);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .message { margin-top: 20px; font-size: 18px; color: #ddd; text-align: center; }
+    .image-fullscreen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 15;
+    }
+    .image-fullscreen img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .back-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      color: #000;
+      background: gold;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s;
+    }
+    .back-btn.show { opacity: 1; transform: translateY(0); }
+    .confetti, .explosion, .blood, .glitch { position: fixed; inset: 0; pointer-events: none; z-index: 25; }
+    .blood-drop {
+      position: absolute;
+      top: -20px;
+      width: 6px;
+      height: 15px;
+      background: darkred;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: drop linear forwards;
+    }
+    @keyframes drop {
+      to { transform: translateY(110vh); opacity: 0.6; }
+    }
+    .glitch {
+      background: rgba(255,255,255,0.1);
+      animation: glitchAnim 0.3s steps(2, end) 3;
+    }
+    @keyframes glitchAnim {
+      0% { transform: translate(0,0); }
+      25% { transform: translate(-10px, 5px); background: rgba(255,0,0,0.2); }
+      50% { transform: translate(8px, -5px); background: rgba(0,255,0,0.2); }
+      75% { transform: translate(-5px, 8px); background: rgba(0,0,255,0.2); }
+      100% { transform: translate(0,0); background: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cover" id="cover">
+    <h1>Selamat Datang di Situs Slot Gratis Jambi</h1>
+    <p class="loading-dots">Loading</p>
+    <button class="enter-btn" id="enterBtn">Masuk</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="spinner" id="spinner">SPIN</div>
+    <div class="message" id="message">Silahkan pencet untuk mendapatkan saldo gratis 💰</div>
+  </div>
+
+  <div class="image-fullscreen" id="imageScreen">
+    <img id="resultImage" src="" alt="result">
+    <button class="back-btn" id="backBtn">Picit lagi dan buktikan ketangguhan jiwa slot kau</button>
+  </div>
+
+  <audio id="bgMusic" src="https://cdn.pixabay.com/audio/2023/06/05/audio_casino-night.mp3" loop preload="auto"></audio>
+  <audio id="winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_slot-machine-win.mp3"></audio>
+  <audio id="screamSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_scream.mp3"></audio>
+  <audio id="rumbleSound" src="https://cdn.pixabay.com/audio/2021/09/01/audio_bass-rumble.mp3"></audio>
+
+  <script>
+    const cover = document.getElementById('cover');
+    const enterBtn = document.getElementById('enterBtn');
+    const stage = document.getElementById('stage');
+    const spinner = document.getElementById('spinner');
+    const message = document.getElementById('message');
+    const imageScreen = document.getElementById('imageScreen');
+    const resultImage = document.getElementById('resultImage');
+    const backBtn = document.getElementById('backBtn');
+    const bgMusic = document.getElementById('bgMusic');
+    const winSound = document.getElementById('winSound');
+    const screamSound = document.getElementById('screamSound');
+    const rumbleSound = document.getElementById('rumbleSound');
+
+    let firstClick = true;
+
+    enterBtn.addEventListener('click', () => {
+      cover.style.display = 'none';
+      stage.style.display = 'flex';
+      bgMusic.play().catch(e => console.log('Autoplay error:', e));
+    });
+
+    spinner.addEventListener('click', () => {
+      if (firstClick) {
+        // SPIN PERTAMA
+        resultImage.src = "pertama.jpg";
+        showImage();
+        winSound.play();
+        launchConfetti();
+        setTimeout(() => backBtn.classList.add('show'), 3000);
+        message.textContent = "nurut pulo anjing 😏";
+        firstClick = false;
+      } else {
+        // SPIN KEDUA (JUMPSCARE REALISTIK)
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+        resultImage.src = "kedua.jpg";
+        showImage();
+        screamSound.play();
+        rumbleSound.play();
+        if (navigator.vibrate) navigator.vibrate([300, 150, 600, 150, 300]);
+        launchBlood();
+        launchGlitch();
+        spinner.style.pointerEvents = 'none'; // lock game
+      }
+    });
+
+    backBtn.addEventListener('click', () => {
+      imageScreen.style.display = 'none';
+      stage.style.display = 'flex';
+      backBtn.classList.remove('show');
+    });
+
+    function showImage() {
+      imageScreen.style.display = 'flex';
+      stage.style.display = 'none';
+    }
+
+    function launchConfetti() {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      document.body.appendChild(confetti);
+      for (let i = 0; i < 80; i++) {
+        const el = document.createElement('div');
+        el.style.position = 'absolute';
+        el.style.width = '8px';
+        el.style.height = '8px';
+        el.style.background = `hsl(${Math.random()*360},100%,50%)`;
+        el.style.left = Math.random()*100 + 'vw';
+        el.style.top = '-10px';
+        el.style.animation = `dropConfetti ${2+Math.random()*3}s linear forwards`;
+        confetti.appendChild(el);
+      }
+      setTimeout(()=>confetti.remove(), 5000);
+    }
+
+    function launchBlood() {
+      const blood = document.createElement('div');
+      blood.className = 'blood';
+      document.body.appendChild(blood);
+      for (let i = 0; i < 60; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'blood-drop';
+        drop.style.left = Math.random()*100 + 'vw';
+        drop.style.width = (4 + Math.random()*8) + 'px';
+        drop.style.height = (10 + Math.random()*20) + 'px';
+        drop.style.animationDuration = (1+Math.random()*3)+'s';
+        blood.appendChild(drop);
+      }
+      setTimeout(()=>blood.remove(), 6000);
+    }
+
+    function launchGlitch() {
+      const glitch = document.createElement('div');
+      glitch.className = 'glitch';
+      document.body.appendChild(glitch);
+      setTimeout(()=>glitch.remove(), 1000);
+    }
+  </script>
+</body>
+</html>
